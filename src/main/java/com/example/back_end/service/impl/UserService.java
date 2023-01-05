@@ -44,4 +44,9 @@ public class UserService implements IUserService {
 	public User findUserByUsername(String username) {
 		return userRepository.findUserByUsername(username);
 	}
+
+	@Override
+	public Page<User> findNormalUsers(Pageable pageable) {
+		return userRepository.findUserByRole_Id(pageable, 1L);
+	}
 }

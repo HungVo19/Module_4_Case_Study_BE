@@ -33,11 +33,11 @@ public class UserController {
 	private String displayLink;
 
 	@GetMapping
-	public ResponseEntity<Page<User>> listUsers(@PageableDefault(size = 2)Pageable pageable) {
-		if (userService.findAll(pageable).isEmpty()) {
+	public ResponseEntity<Page<User>> listNormalUsers(@PageableDefault(size = 5)Pageable pageable) {
+		if (userService.findNormalUsers(pageable).isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
+		return new ResponseEntity<>(userService.findNormalUsers(pageable), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
