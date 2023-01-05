@@ -62,4 +62,15 @@ public class UserController {
 		userService.deleteById(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
+
+	@PostMapping("/status/{id}")
+	public ResponseEntity<User> blockUser(@PathVariable Long id) {
+		Optional<User> user = userService.findById(id);
+		if (!user.isPresent()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		user.get().setStatus(false);
+		userService.save(user.get());
+		return new ResponseEntity<>(user.get(), HttpStatus.OK);
+	}
 }
