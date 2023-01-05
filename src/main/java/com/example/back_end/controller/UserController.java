@@ -99,5 +99,12 @@ public class UserController {
 		return new ResponseEntity<>(user.get(), HttpStatus.OK);
 	}
 
-
+	@GetMapping("/search")
+	public ResponseEntity<List<User>> searchUserByUsername(@RequestParam("q") String username) {
+		List<User> users = userService.findUserByUsernameContaining(username);
+		if (users.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(users, HttpStatus.OK);
+	}
 }
