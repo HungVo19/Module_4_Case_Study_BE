@@ -10,12 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,26 +45,7 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
-	@PostMapping
-	public ResponseEntity<?> createUser(@RequestPart(value = "file", required = false) MultipartFile file,
-										@RequestBody User user) {
-		if (userService.findUserByUsername(user.getUsername()) == null) {
-			if (file != null) {
-				String fileName = file.getOriginalFilename();
-				try {
-					FileCopyUtils.copy(file.getBytes(), new File(link + fileName));
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-				user.setAvatar(displayLink + fileName);
-			} else {
-				user.setAvatar(displayLink + "avatar.jpg");
-			}
-			userService.save(user);
-			return new ResponseEntity<>(user, HttpStatus.OK);
-		}
-		return new ResponseEntity<>("User name is existed",HttpStatus.CONFLICT);
-	}
+
 
 	@PutMapping("/{id}")
 	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
@@ -103,7 +80,7 @@ public class UserController {
 	public ResponseEntity<List<User>> searchUserByUsername(@RequestParam("q") String username) {
 		List<User> users = userService.findUserByUsernameContaining(username);
 		if (users.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
