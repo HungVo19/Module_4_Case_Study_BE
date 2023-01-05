@@ -18,6 +18,7 @@ public class Blog {
     private String content;
     private String image;
     private boolean status;
+    private boolean privacy;
     @ManyToOne(targetEntity = User.class)
     private User user;
     @Transient
