@@ -41,14 +41,14 @@ public class AdminController {
 		return userService.activeUser(false, id);
 	}
 
-	@GetMapping("/status/{id}")
+	@PutMapping("/status/{id}")
 	public ResponseEntity<User> unBlockUser(@PathVariable Long id) {
 		return userService.activeUser(true, id);
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<List<User>> searchUserByUsername(@RequestParam("q") String username) {
-		List<User> users = userService.findUserByUsernameContaining(username);
+	public ResponseEntity<Page<User>> searchUserByUsername(@RequestParam("q") String username, Pageable pageable) {
+		Page<User> users = userService.findUserByUsernameContaining(pageable, username);
 		if (users.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}

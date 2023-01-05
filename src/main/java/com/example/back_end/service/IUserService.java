@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface IUserService extends ICOREService<User, Long>{
-	List<User> findUserByUsernameContaining(String username);
+	Page<User> findUserByUsernameContaining(Pageable pageable, String username);
 
 	User findUserByUsername(String username);
 

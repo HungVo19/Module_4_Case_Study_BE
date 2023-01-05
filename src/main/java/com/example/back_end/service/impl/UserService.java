@@ -38,8 +38,8 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public List<User> findUserByUsernameContaining(String username) {
-		return userRepository.findUserByUsernameContaining(username);
+	public Page<User> findUserByUsernameContaining(Pageable pageable, String username) {
+		return userRepository.findUserByUsernameContaining(pageable, username);
 	}
 
 	@Override
