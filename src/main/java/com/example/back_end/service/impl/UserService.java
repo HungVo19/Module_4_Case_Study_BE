@@ -6,6 +6,8 @@ import com.example.back_end.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +50,16 @@ public class UserService implements IUserService {
 	@Override
 	public Page<User> findNormalUsers(Pageable pageable) {
 		return userRepository.findUserByRole_Id(pageable, 1L);
+	}
+
+	@Override
+	public ResponseEntity<User> activeUser(Boolean b, Long id) {
+		Optional<User> user = userRepository.findById(id);
+		if (!user.isPresent()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		user.get().setStatus(b);
+		userRepository.save(user.get());
+		return new ResponseEntity<>(user.get(), HttpStatus.OK);
 	}
 }

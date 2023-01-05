@@ -1,5 +1,6 @@
 package com.example.back_end.controller;
 
+import com.example.back_end.model.Role;
 import com.example.back_end.model.User;
 import com.example.back_end.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,9 @@ public class RegisterController {
 			} else {
 				user.setAvatar(displayLink + "avatar.jpg");
 			}
+			user.setStatus(true);
 			userService.save(user);
-			return new ResponseEntity<>(user, HttpStatus.OK);
+			return new ResponseEntity<>(user, HttpStatus.CREATED);
 		}
 		return new ResponseEntity<>("User name is existed",HttpStatus.CONFLICT);
 	}
