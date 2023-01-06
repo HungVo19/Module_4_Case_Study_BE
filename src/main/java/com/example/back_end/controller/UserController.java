@@ -1,6 +1,7 @@
 package com.example.back_end.controller;
 
 import com.example.back_end.model.ChangePassword;
+import com.example.back_end.model.ForgotPassword;
 import com.example.back_end.model.User;
 import com.example.back_end.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +60,28 @@ public class UserController {
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
-//	@PostMapping("forgot-password")
-//	public ResponseEntity<User> forgotPassword(@RequestParam("username") String username,
-//											   @RequestParam("email") String email) {
-//		User confirmUsername = userService.findUserByUsername(username);
-//		User confirmEmail = userService.findUserByEmail(email);
-//		if (confirmUsername.equals(confirmEmail)) {
-//			return
-//		}
-//	}
+	@PostMapping("/forgot-password")
+	public ResponseEntity<User> forgotPassword(@RequestBody ForgotPassword forgotPassword) {
+		User confirmUsername = userService.findUserByUsername(forgotPassword.getUsername());
+		User confirmEmail = userService.findUserByEmail(forgotPassword.getEmail());
+		if (confirmUsername.equals(confirmEmail)) {
+			return new ResponseEntity<>(confirmEmail, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/change-password/{id}")
+	public ResponseEntity<User> changePassAfterForgot(@PathVariable Long id,
+													  @RequestBody ChangePassword changePassword) {
+		Optional<User> user = userService.findById(id);
+		if (!user.isPresent()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		if (changePassword.getNewPass().equals(changePassword.getConfirmPass())) {
+			user.get().setPassword(changePassword.getNewPass());
+			return new ResponseEntity<>(user.get(), HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
 }
