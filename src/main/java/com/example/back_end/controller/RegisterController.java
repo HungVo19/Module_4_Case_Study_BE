@@ -1,7 +1,7 @@
 package com.example.back_end.controller;
 
-import com.example.back_end.model.Role;
 import com.example.back_end.model.User;
+import com.example.back_end.service.IRoleService;
 import com.example.back_end.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +21,8 @@ import java.io.IOException;
 public class RegisterController {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private IRoleService roleService;
 
 	@Value("${upload.path}")
 	private String link;
@@ -31,7 +33,7 @@ public class RegisterController {
 	@PostMapping
 	public ResponseEntity<?> createUser(@RequestPart(value = "file", required = false) MultipartFile file,
 										@RequestBody User user) {
-		if (userService.findUserByUsername(user.getUsername()) == null) {
+		if (userService.findUserByUsername(user.getUsername()) == null && userService.findUserByEmail(user.getEmail()) == null) {
 			if (file != null) {
 				String fileName = file.getOriginalFilename();
 				try {
@@ -44,6 +46,7 @@ public class RegisterController {
 				user.setAvatar(displayLink + "avatar.jpg");
 			}
 			user.setStatus(true);
+			user.setRole(roleService.findById(1L).get());
 			userService.save(user);
 			return new ResponseEntity<>(user, HttpStatus.CREATED);
 		}

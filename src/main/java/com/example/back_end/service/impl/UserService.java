@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 @Service
 public class UserService implements IUserService {
@@ -61,5 +60,10 @@ public class UserService implements IUserService {
 		user.get().setStatus(b);
 		userRepository.save(user.get());
 		return new ResponseEntity<>(user.get(), HttpStatus.OK);
+	}
+
+	@Override
+	public User findUserByEmail(String email) {
+		return userRepository.findUserByEmail(email);
 	}
 }

@@ -1,18 +1,16 @@
 package com.example.back_end.controller;
 
+import com.example.back_end.model.ChangePassword;
+import com.example.back_end.model.ForgotPassword;
 import com.example.back_end.model.User;
 import com.example.back_end.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -46,4 +44,44 @@ public class UserController {
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
+	@PutMapping("/change-password/{id}")
+	public ResponseEntity<User> changePassword(@PathVariable Long id,
+											   @RequestBody ChangePassword changePassword) {
+		User user = userService.findById(id).get();
+		if (!changePassword.getCurrentPass().equals(user.getPassword())) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else if (changePassword.getNewPass().equals(user.getPassword())) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else if (!changePassword.getConfirmPass().equals(changePassword.getNewPass())) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		user.setPassword(changePassword.getNewPass());
+		userService.save(user);
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+
+	@PostMapping("/forgot-password")
+	public ResponseEntity<User> forgotPassword(@RequestBody ForgotPassword forgotPassword) {
+		User confirmUsername = userService.findUserByUsername(forgotPassword.getUsername());
+		User confirmEmail = userService.findUserByEmail(forgotPassword.getEmail());
+		if (confirmUsername.equals(confirmEmail)) {
+			return new ResponseEntity<>(confirmEmail, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/change-password/{id}")
+	public ResponseEntity<User> changePassAfterForgot(@PathVariable Long id,
+													  @RequestBody ChangePassword changePassword) {
+		Optional<User> user = userService.findById(id);
+		if (!user.isPresent()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		if (changePassword.getNewPass().equals(changePassword.getConfirmPass())) {
+			user.get().setPassword(changePassword.getNewPass());
+			return new ResponseEntity<>(user.get(), HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
 }
