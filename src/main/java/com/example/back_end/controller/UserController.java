@@ -42,4 +42,21 @@ public class UserController {
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
+	@PutMapping("/change-password/{id}")
+	public ResponseEntity<User> changePassword(@PathVariable Long id,
+											   @RequestParam("currentPass") String currentPass,
+											   @RequestParam("newPass") String newPass,
+											   @RequestParam("confirmPass") String confirmPass) {
+		User user = userService.findById(id).get();
+		if (!currentPass.equals(user.getPassword())) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else if (newPass.equals(user.getPassword())) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else if (!confirmPass.equals(newPass)) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		user.setPassword(newPass);
+		userService.save(user);
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
 }
