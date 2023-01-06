@@ -30,7 +30,7 @@ public class AdminController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		userService.deleteById(id);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(userService.findById(id).get(), HttpStatus.NO_CONTENT);
 	}
 
 	@PostMapping("/{id}")

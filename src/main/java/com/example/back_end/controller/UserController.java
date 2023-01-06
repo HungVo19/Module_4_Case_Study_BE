@@ -1,5 +1,6 @@
 package com.example.back_end.controller;
 
+import com.example.back_end.model.ChangePassword;
 import com.example.back_end.model.User;
 import com.example.back_end.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,19 +45,27 @@ public class UserController {
 
 	@PutMapping("/change-password/{id}")
 	public ResponseEntity<User> changePassword(@PathVariable Long id,
-											   @RequestParam("currentPass") String currentPass,
-											   @RequestParam("newPass") String newPass,
-											   @RequestParam("confirmPass") String confirmPass) {
+											   @RequestBody ChangePassword changePassword) {
 		User user = userService.findById(id).get();
-		if (!currentPass.equals(user.getPassword())) {
+		if (!changePassword.getCurrentPass().equals(user.getPassword())) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} else if (newPass.equals(user.getPassword())) {
+		} else if (changePassword.getNewPass().equals(user.getPassword())) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} else if (!confirmPass.equals(newPass)) {
+		} else if (!changePassword.getConfirmPass().equals(changePassword.getNewPass())) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		user.setPassword(newPass);
+		user.setPassword(changePassword.getNewPass());
 		userService.save(user);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
+
+//	@PostMapping("forgot-password")
+//	public ResponseEntity<User> forgotPassword(@RequestParam("username") String username,
+//											   @RequestParam("email") String email) {
+//		User confirmUsername = userService.findUserByUsername(username);
+//		User confirmEmail = userService.findUserByEmail(email);
+//		if (confirmUsername.equals(confirmEmail)) {
+//			return
+//		}
+//	}
 }

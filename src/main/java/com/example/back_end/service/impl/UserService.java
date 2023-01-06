@@ -61,4 +61,9 @@ public class UserService implements IUserService {
 		userRepository.save(user.get());
 		return new ResponseEntity<>(user.get(), HttpStatus.OK);
 	}
+
+	@Override
+	public User findUserByEmail(String email) {
+		return userRepository.findUserByEmail(email);
+	}
 }

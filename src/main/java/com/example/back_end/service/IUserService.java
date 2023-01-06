@@ -14,4 +14,6 @@ public interface IUserService extends ICOREService<User, Long>{
 
 	ResponseEntity<User> activeUser(Boolean b, Long id);
 
+	User findUserByEmail(String email);
+
 }
