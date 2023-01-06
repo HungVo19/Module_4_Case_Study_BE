@@ -10,9 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -36,12 +33,12 @@ public class AdminController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-	@PostMapping("/status/{id}")
+	@PostMapping("/{id}")
 	public ResponseEntity<User> blockUser(@PathVariable Long id) {
 		return userService.activeUser(false, id);
 	}
 
-	@PutMapping("/status/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<User> unBlockUser(@PathVariable Long id) {
 		return userService.activeUser(true, id);
 	}
