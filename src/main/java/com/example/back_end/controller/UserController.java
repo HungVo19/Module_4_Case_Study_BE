@@ -3,6 +3,8 @@ package com.example.back_end.controller;
 import com.example.back_end.model.User;
 import com.example.back_end.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,17 +17,16 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
+@PropertySource("classpath:application.properties")
 public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping
-	public ResponseEntity<Page<User>> listUsers(@PageableDefault(size = 2)Pageable pageable) {
-		if (userService.findAll(pageable).isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}
-		return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
-	}
+	@Value("${upload.path}")
+	private String link;
+
+	@Value("${display.path}")
+	private String displayLink;
 
 	@GetMapping("/{id}")
 	public ResponseEntity<User> findUserById(@PathVariable Long id) {
@@ -34,15 +35,6 @@ public class UserController {
 			return new ResponseEntity<>(user.get(), HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	}
-
-	@PostMapping
-	public ResponseEntity<?> createUser(@RequestBody User user) {
-		if (userService.findUserByUsername(user.getUsername()) == null) {
-			userService.save(user);
-			return new ResponseEntity<>(user, HttpStatus.OK);
-		}
-		return new ResponseEntity<>("User name is existed",HttpStatus.CONFLICT);
 	}
 
 	@PutMapping("/{id}")
@@ -54,12 +46,4 @@ public class UserController {
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<User> deleteUser(@PathVariable Long id) {
-		if (!userService.findById(id).isPresent()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		userService.deleteById(id);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
 }
