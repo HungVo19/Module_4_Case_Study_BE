@@ -1,7 +1,6 @@
 package com.example.back_end.controller;
 
 import com.example.back_end.model.Comment;
-import com.example.back_end.model.Label;
 import com.example.back_end.service.impl.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
