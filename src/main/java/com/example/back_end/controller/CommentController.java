@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -28,13 +29,18 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<Comment> saveComment(@RequestBody Comment comment) {
+        comment.setDate(LocalDate.now());
         return new ResponseEntity<>(commentService.save(comment), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Comment> updateComment (@RequestBody Comment comment, @PathVariable Long id) {
-        if (commentService.findById(id).isPresent()) {
-            return new ResponseEntity<>(commentService.save(comment), HttpStatus.OK);
+        Optional<Comment> commentUpdate = commentService.findById(id);
+        if (commentUpdate.isPresent()) {
+            commentUpdate.get().setDate(LocalDate.now());
+            commentUpdate.get().setContent(comment.getContent());
+            commentService.save(commentUpdate.get());
+            return new ResponseEntity<>(commentUpdate.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
