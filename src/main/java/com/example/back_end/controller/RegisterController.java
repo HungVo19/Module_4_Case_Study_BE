@@ -33,7 +33,7 @@ public class RegisterController {
 	@PostMapping
 	public ResponseEntity<?> createUser(@RequestPart(value = "file", required = false) MultipartFile file,
 										@RequestBody User user) {
-		if (userService.findUserByUsername(user.getUsername()) == null) {
+		if (userService.findUserByUsername(user.getUsername()) == null && userService.findUserByEmail(user.getEmail()) == null) {
 			if (file != null) {
 				String fileName = file.getOriginalFilename();
 				try {
