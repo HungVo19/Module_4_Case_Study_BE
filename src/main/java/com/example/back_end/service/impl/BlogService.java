@@ -7,6 +7,8 @@ import com.example.back_end.service.IBlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,10 +26,7 @@ public class BlogService implements IBlogService {
 
     @Override
     public Optional<Blog> findById(Long id) {
-        if (blogRepository.findById(id).isPresent()) {
-            return blogRepository.findById(id);
-        }
-        return Optional.empty();
+        return blogRepository.findById(id);
     }
 
     @Override
@@ -37,11 +36,27 @@ public class BlogService implements IBlogService {
 
     @Override
     public void deleteById(Long id) {
-        blogRepository.deleteById(id);
+        Blog blog = findById(id).get();
+        blog.setStatus(false);
     }
 
     @Override
-    public List<Blog> findAllByUser(User user) {
-        return blogRepository.findAllByUser(user);
+    public Page<Blog> findAllByUserIdAndStatusIsTrue(Long userId, Pageable pageable) {
+        return blogRepository.findAllByUserIdAndStatusIsTrue(userId, pageable);
+    }
+
+    @Override
+    public Page<Blog> findAllPublicBlogs(Pageable pageable) {
+        return blogRepository.findAllByPrivacyIsTrueAndStatusIsTrue(pageable);
+    }
+
+    @Override
+    public Page<Blog> findAllPublicBlogsByUserId(Long userId, Pageable pageable) {
+        return blogRepository.findAllByPrivacyIsTrueAndStatusIsTrueAndUserId(userId,pageable);
+    }
+
+    @Override
+    public Page<Blog> findAllByTitleContainingOrTitleContaining(String string1, String string2, Pageable pageable) {
+        return blogRepository.findAllByTitleContainingOrTitleContaining(string1,string2,pageable);
     }
 }

@@ -12,12 +12,14 @@ public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String title;
     private String description;
     private LocalDate createdDate;
     private String content;
     private String image;
     private boolean status;
+    @Column(nullable = false)
     private boolean privacy;
     @ManyToOne(targetEntity = User.class)
     private User user;
