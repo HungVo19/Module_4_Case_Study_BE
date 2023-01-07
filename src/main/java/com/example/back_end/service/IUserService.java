@@ -12,7 +12,7 @@ public interface IUserService extends ICOREService<User, Long>{
 
 	Page<User> findNormalUsers(Pageable pageable);
 
-	ResponseEntity<User> activeUser(Boolean b, Long id);
+	ResponseEntity<User> setStatus(Long id);
 
 	User findUserByEmail(String email);
 

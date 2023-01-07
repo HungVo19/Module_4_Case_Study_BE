@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/users")
 @PropertySource("classpath:application.properties")
 public class UserController {

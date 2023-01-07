@@ -11,17 +11,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/admin")
 public class AdminController {
 	@Autowired
 	private UserService userService;
 
 	@GetMapping
-	public ResponseEntity<Page<User>> listNormalUsers(@PageableDefault(size = 5) Pageable pageable) {
-		if (userService.findNormalUsers(pageable).isEmpty()) {
+	public ResponseEntity<Page<User>> listNormalUsers(Pageable pageable) {
+		if (userService.findNormalUsers(Pageable.unpaged()).isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		return new ResponseEntity<>(userService.findNormalUsers(pageable), HttpStatus.OK);
+		return new ResponseEntity<>(userService.findNormalUsers(Pageable.unpaged()), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
@@ -34,13 +35,8 @@ public class AdminController {
 	}
 
 	@PostMapping("/{id}")
-	public ResponseEntity<User> blockUser(@PathVariable Long id) {
-		return userService.activeUser(false, id);
-	}
-
-	@PutMapping("/{id}")
-	public ResponseEntity<User> unBlockUser(@PathVariable Long id) {
-		return userService.activeUser(true, id);
+	public ResponseEntity<User> setStatus(@PathVariable Long id) {
+		return userService.setStatus(id);
 	}
 
 	@GetMapping("/search")

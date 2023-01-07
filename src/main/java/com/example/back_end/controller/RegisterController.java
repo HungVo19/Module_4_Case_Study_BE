@@ -1,5 +1,6 @@
 package com.example.back_end.controller;
 
+import com.example.back_end.model.RegisterForm;
 import com.example.back_end.model.User;
 import com.example.back_end.service.IRoleService;
 import com.example.back_end.service.impl.UserService;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/register")
 @PropertySource("classpath:application.properties")
 public class RegisterController {
@@ -24,32 +26,26 @@ public class RegisterController {
 	@Autowired
 	private IRoleService roleService;
 
-	@Value("${upload.path}")
-	private String link;
-
-	@Value("${display.path}")
-	private String displayLink;
-
 	@PostMapping
-	public ResponseEntity<?> createUser(@RequestPart(value = "file", required = false) MultipartFile file,
-										@RequestBody User user) {
-		if (userService.findUserByUsername(user.getUsername()) == null && userService.findUserByEmail(user.getEmail()) == null) {
-			if (file != null) {
-				String fileName = file.getOriginalFilename();
-				try {
-					FileCopyUtils.copy(file.getBytes(), new File(link + fileName));
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-				user.setAvatar(displayLink + fileName);
-			} else {
-				user.setAvatar(displayLink + "avatar.jpg");
-			}
-			user.setStatus(true);
-			user.setRole(roleService.findById(1L).get());
-			userService.save(user);
-			return new ResponseEntity<>(user, HttpStatus.CREATED);
+	public ResponseEntity<?> createUser(@RequestBody RegisterForm user) {
+		if (user.getUsername() == null || user.getPass() == null || user.getRePass() == null) {
+			return new ResponseEntity<>("All fields can not be blank", HttpStatus.CONFLICT);
 		}
-		return new ResponseEntity<>("User name is existed",HttpStatus.CONFLICT);
+		if (userService.findUserByUsername(user.getUsername()) == null &&
+			userService.findUserByEmail(user.getEmail()) == null) {
+			if (user.getPass().equals(user.getRePass())) {
+				User userCreate = new User();
+				userCreate.setUsername(user.getUsername());
+				userCreate.setPassword(user.getPass());
+				userCreate.setStatus(true);
+				userCreate.setRole(roleService.findById(1L).get());
+				userService.save(userCreate);
+				return new ResponseEntity<>(user, HttpStatus.CREATED);
+			} else {
+				return new ResponseEntity<>("Wrong re-pass", HttpStatus.CONFLICT);
+			}
+		} else {
+			return new ResponseEntity<>("Username or password is existed", HttpStatus.CONFLICT);
+		}
 	}
 }

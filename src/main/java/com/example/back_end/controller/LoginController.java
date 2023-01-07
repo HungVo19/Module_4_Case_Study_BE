@@ -9,24 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/login")
 public class LoginController {
 	@Autowired
 	private UserService userService;
-
-//	@PostMapping
-//	public ResponseEntity<User> login(@RequestParam("loginInput") String loginInput,
-//									  @RequestParam("password") String password) {
-//		User usernameLogin = userService.findUserByUsername(loginInput);
-//		User emailLogin = userService.findUserByEmail(loginInput);
-//		if (usernameLogin != null && usernameLogin.getPassword().equals(password)) {
-//			return new ResponseEntity<>(usernameLogin, HttpStatus.OK);
-//		}
-//		if (emailLogin != null && emailLogin.getPassword().equals(password)) {
-//			return new ResponseEntity<>(emailLogin, HttpStatus.OK);
-//		}
-//		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//	}
 
 	@PostMapping
 	public ResponseEntity<User> login(@RequestBody LoginForm loginForm) {
