@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 @Service
 public class UserService implements IUserService {
@@ -53,13 +52,22 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public ResponseEntity<User> activeUser(Boolean b, Long id) {
+	public ResponseEntity<User> setStatus(Long id) {
 		Optional<User> user = userRepository.findById(id);
 		if (!user.isPresent()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		user.get().setStatus(b);
+		if (user.get().isStatus()) {
+			user.get().setStatus(false);
+		} else {
+			user.get().setStatus(true);
+		}
 		userRepository.save(user.get());
 		return new ResponseEntity<>(user.get(), HttpStatus.OK);
+	}
+
+	@Override
+	public User findUserByEmail(String email) {
+		return userRepository.findUserByEmail(email);
 	}
 }
