@@ -25,5 +25,6 @@ public class Blog {
     private User user;
     @Transient
     private List<Label> labels;
-
+    @Transient
+    private List<Comment> comments;
 }

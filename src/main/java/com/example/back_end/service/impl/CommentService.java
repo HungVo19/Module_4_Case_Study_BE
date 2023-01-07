@@ -1,5 +1,6 @@
 package com.example.back_end.service.impl;
 
+import com.example.back_end.model.Blog;
 import com.example.back_end.model.Comment;
 import com.example.back_end.repository.ICommentRepository;
 import com.example.back_end.service.ICommentService;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class CommentService implements ICommentService {

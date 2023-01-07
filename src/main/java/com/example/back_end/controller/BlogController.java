@@ -1,7 +1,10 @@
 package com.example.back_end.controller;
 
 import com.example.back_end.model.Blog;
+import com.example.back_end.model.Comment;
 import com.example.back_end.service.IBlogService;
+import com.example.back_end.service.ICommentService;
+import com.example.back_end.service.ILabelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -49,15 +52,14 @@ public class BlogController {
     }
 
     @GetMapping("/blogs/public")
-    public ResponseEntity<Page<Blog>> findAllPublicBlogs() {
-        return new ResponseEntity<>(blogService.findAllPublicBlogs(Pageable.unpaged()), HttpStatus.OK);
+    public ResponseEntity<Page<Blog>> findPublicBlogs(Pageable pageable) {
+       return new ResponseEntity<>(blogService.findAllPublicBlogs(pageable),HttpStatus.OK);
     }
 
     @GetMapping("/users/{id}/blogs/public")
-    public ResponseEntity<Page<Blog>> findAllPublicBlogsByUserId(@PathVariable Long id) {
+    public ResponseEntity<Page<Blog>> findAllPublicBlogsByUserId(@PathVariable Long id,Pageable pageable) {
         return new ResponseEntity<>(blogService.findAllPublicBlogsByUserId(id, Pageable.unpaged()), HttpStatus.OK);
     }
-
 
     @PostMapping("/blogs")
     public ResponseEntity<Blog> create(@RequestPart(value = "file", required = false)
@@ -82,6 +84,7 @@ public class BlogController {
         blog.setCreatedDate(LocalDate.now());
 
         blog.setStatus(true);
+
 
         return new ResponseEntity<>(blogService.save(blog), HttpStatus.CREATED);
     }

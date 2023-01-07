@@ -6,7 +6,9 @@ import com.example.back_end.repository.IBlogRepository;
 import com.example.back_end.service.IBlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,7 @@ public class BlogService implements IBlogService {
 
     @Override
     public Page<Blog> findAllPublicBlogs(Pageable pageable) {
-        return blogRepository.findAllByPrivacyIsTrueAndStatusIsTrue(pageable);
+        return blogRepository.findAllByPrivacyIsTrueAndStatusIsTrueOrderByCreatedDateDesc(pageable);
     }
 
     @Override
@@ -59,4 +61,5 @@ public class BlogService implements IBlogService {
     public Page<Blog> findAllByTitleContainingOrTitleContaining(String string1, String string2, Pageable pageable) {
         return blogRepository.findAllByTitleContainingOrTitleContaining(string1,string2,pageable);
     }
+
 }

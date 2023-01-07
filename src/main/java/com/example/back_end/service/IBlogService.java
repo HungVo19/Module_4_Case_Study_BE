@@ -15,8 +15,4 @@ public interface IBlogService extends ICOREService<Blog, Long> {
     Page<Blog> findAllPublicBlogsByUserId(Long userId, Pageable pageable);
     Page<Blog>findAllByTitleContainingOrTitleContaining(String string1, String string2, Pageable pageable);
 
-
-
-
-
 }

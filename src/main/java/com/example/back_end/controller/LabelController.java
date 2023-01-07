@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("labels")
 public class LabelController {
     @Autowired
@@ -20,6 +21,11 @@ public class LabelController {
     @GetMapping
     public ResponseEntity<Page<Label>> findAllLabel(Pageable pageable) {
         return new ResponseEntity<>(labelService.findAll(pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<Page<Label>> getAllLabels() {
+        return new ResponseEntity<>(labelService.findAll(Pageable.unpaged()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

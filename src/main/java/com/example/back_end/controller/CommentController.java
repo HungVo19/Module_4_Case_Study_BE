@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/comments")
 public class CommentController {
 
@@ -23,7 +24,7 @@ public class CommentController {
     @GetMapping("/{blogId}")
     public ResponseEntity<Page<Comment>> findAllCommentByBlogId(@PageableDefault(size = 5)Pageable pageable,
                                                               @PathVariable Long blogId) {
-        return new ResponseEntity<>(commentService.findAllByBlogId(pageable, blogId), HttpStatus.OK);
+        return new ResponseEntity<>(commentService.findAllByBlogId(Pageable.unpaged(), blogId), HttpStatus.OK);
     }
 
     @PostMapping
