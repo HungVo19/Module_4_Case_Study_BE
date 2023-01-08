@@ -5,7 +5,6 @@ import com.example.back_end.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +18,10 @@ public class AdminController {
 
 	@GetMapping
 	public ResponseEntity<Page<User>> listNormalUsers(Pageable pageable) {
-		if (userService.findNormalUsers(Pageable.unpaged()).isEmpty()) {
+		if (userService.findNormalUsers(pageable).isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		return new ResponseEntity<>(userService.findNormalUsers(Pageable.unpaged()), HttpStatus.OK);
+		return new ResponseEntity<>(userService.findNormalUsers(pageable), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
@@ -46,5 +45,6 @@ public class AdminController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(users, HttpStatus.OK);
+
 	}
 }
