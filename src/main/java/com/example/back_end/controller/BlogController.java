@@ -52,8 +52,13 @@ public class BlogController {
     }
 
     @GetMapping("/blogs/public")
-    public ResponseEntity<Page<Blog>> findPublicBlogs(Pageable pageable) {
+    public ResponseEntity<Page<Blog>> findPublicBlogs(@PageableDefault(size = 2) Pageable pageable) {
        return new ResponseEntity<>(blogService.findAllPublicBlogs(pageable),HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs/latestBlog")
+    public ResponseEntity<Page<Blog>> findLatestBlogs(@PageableDefault(size = 4) Pageable pageable) {
+        return new ResponseEntity<>(blogService.findAllPublicBlogs(pageable),HttpStatus.OK);
     }
 
     @GetMapping("/users/{id}/blogs/public")
