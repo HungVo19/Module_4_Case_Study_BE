@@ -19,10 +19,10 @@ public class AdminController {
 
 	@GetMapping
 	public ResponseEntity<Page<User>> listNormalUsers(Pageable pageable) {
-		if (userService.findNormalUsers(Pageable.unpaged()).isEmpty()) {
+		if (userService.findNormalUsers(pageable).isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		return new ResponseEntity<>(userService.findNormalUsers(Pageable.unpaged()), HttpStatus.OK);
+		return new ResponseEntity<>(userService.findNormalUsers(pageable), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
