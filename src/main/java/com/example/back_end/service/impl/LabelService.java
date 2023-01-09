@@ -42,4 +42,9 @@ public class LabelService implements ILabelService {
         return iLabelRepository.findByName(name);
     }
 
+    @Override
+    public Page<Label> findAllLabelByBlogId(Pageable pageable, Long id) {
+        return iLabelRepository.findAllLabelByBlogId(id, pageable);
+    }
+
 }
