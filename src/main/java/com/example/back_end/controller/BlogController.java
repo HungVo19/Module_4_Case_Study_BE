@@ -7,6 +7,7 @@ import com.example.back_end.service.ICommentService;
 import com.example.back_end.service.ILabelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,11 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping
+@PropertySource("classpath:application.properties")
 public class BlogController {
     @Autowired
     IBlogService blogService;
@@ -53,17 +56,23 @@ public class BlogController {
 
     @GetMapping("/blogs/public")
     public ResponseEntity<Page<Blog>> findPublicBlogs(@PageableDefault(size = 2) Pageable pageable) {
-       return new ResponseEntity<>(blogService.findAllPublicBlogs(pageable),HttpStatus.OK);
+        return new ResponseEntity<>(blogService.findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/blogs/latestBlog")
     public ResponseEntity<Page<Blog>> findLatestBlogs(@PageableDefault(size = 4) Pageable pageable) {
-        return new ResponseEntity<>(blogService.findAllPublicBlogs(pageable),HttpStatus.OK);
+        return new ResponseEntity<>(blogService.findAllPublicBlogs(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/users/{id}/blogs/public")
-    public ResponseEntity<Page<Blog>> findAllPublicBlogsByUserId(@PathVariable Long id,Pageable pageable) {
+    public ResponseEntity<Page<Blog>> findAllPublicBlogsByUserId(@PathVariable Long id, Pageable pageable) {
         return new ResponseEntity<>(blogService.findAllPublicBlogsByUserId(id, Pageable.unpaged()), HttpStatus.OK);
+    }
+
+    @GetMapping("/labels/{labelId}/blogs")
+    public ResponseEntity<Page<Blog>> findAllPublicBlogsByLabelId(@PathVariable Long labelId,@PageableDefault(size = 2) Pageable pageable) {
+        Page<Blog> blogs = blogService.findBlogsByLabelId(labelId, Pageable.unpaged());
+        return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
     @PostMapping("/blogs")
@@ -82,7 +91,7 @@ public class BlogController {
             blog.setImage(displayLink + "default.jpg");
         }
 
-        if (blog.getDescription() == null) {
+        if (blog.getDescription().isEmpty()) {
             blog.setDescription(blog.getContent().substring(0, 50) + "...");
         }
 
@@ -125,7 +134,7 @@ public class BlogController {
 
     @GetMapping("/blogs/search")
     public ResponseEntity<Page<Blog>> search(@RequestParam(value = "q") String q, Pageable pageable) {
-        Page<Blog> pages = blogService.findAllByTitleContainingOrTitleContaining("%" +q + "%", "%" +q + "%", Pageable.unpaged());
+        Page<Blog> pages = blogService.findAllByTitleContainingOrTitleContaining("%" + q + "%", "%" + q + "%", Pageable.unpaged());
         System.out.println("test");
         return new ResponseEntity<>(pages, HttpStatus.OK);
     }
