@@ -32,6 +32,8 @@ public class LabelController {
         return new ResponseEntity<>(labelService.findAll(Pageable.unpaged()), HttpStatus.OK);
     }
 
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Label> findOneLabel(@PathVariable Long id) {
         if (labelService.findById(id).isPresent()) {

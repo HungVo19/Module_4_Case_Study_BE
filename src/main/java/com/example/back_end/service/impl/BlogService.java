@@ -1,7 +1,6 @@
 package com.example.back_end.service.impl;
 
 import com.example.back_end.model.Blog;
-import com.example.back_end.model.Comment;
 import com.example.back_end.model.User;
 import com.example.back_end.repository.IBlogRepository;
 import com.example.back_end.service.IBlogService;
@@ -81,5 +80,14 @@ public class BlogService implements IBlogService {
     @Override
     public Long countComment(Long id) {
         return blogRepository.countAllCommentByBlogId(id);
+    }
+    @Override
+    public Page<Blog> findBlogsByLabelId(Long labelId, Pageable pageable) {
+        return blogRepository.findBlogsByLabelId(labelId,pageable);
+    }
+
+    @Override
+    public Page<Blog> findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(Pageable pageable) {
+        return blogRepository.findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(pageable);
     }
 }

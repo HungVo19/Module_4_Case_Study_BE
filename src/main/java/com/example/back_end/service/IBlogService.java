@@ -16,6 +16,11 @@ public interface IBlogService extends ICOREService<Blog, Long> {
 
     Page<Blog> findAllPublicBlogsByUserId(Long userId, Pageable pageable);
     Page<Blog>findAllByTitleContainingOrTitleContaining(String string1, String string2, Pageable pageable);
+    Page<Blog>findBlogsByLabelId(Long labelId, Pageable pageable
+    );
+    Page<Blog>findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(Pageable pageable);
+
+
 
     ResponseEntity<Blog> setStatus(Long id);
 
