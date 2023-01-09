@@ -2,6 +2,7 @@ package com.example.back_end.controller;
 
 import com.example.back_end.model.Blog;
 import com.example.back_end.model.Comment;
+import com.example.back_end.model.User;
 import com.example.back_end.service.IBlogService;
 import com.example.back_end.service.ICommentService;
 import com.example.back_end.service.ILabelService;
@@ -48,7 +49,8 @@ public class BlogController {
 
     @GetMapping("/blogs")
     public ResponseEntity<Page<Blog>> findAll(@PageableDefault(size = 2) Pageable pageable) {
-        return new ResponseEntity<>(blogService.findAll(Pageable.unpaged()), HttpStatus.OK);
+        Page<Blog> blogs = blogService.findAll(pageable);
+        return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
     @GetMapping("/blogs/public")
@@ -130,10 +132,20 @@ public class BlogController {
         return new ResponseEntity<>(pages, HttpStatus.OK);
     }
 
-    @DeleteMapping("/blogs/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id) {
-        blogService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+//    @DeleteMapping("/blogs/{id}")
+//    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+//        blogService.deleteById(id);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+
+    @PostMapping("/blogs/{id}")
+    public ResponseEntity<Blog> setStatus(@PathVariable Long id) {
+        return blogService.setStatus(id);
     }
 
+    @GetMapping("blogs/count/{id}")
+    public ResponseEntity<Long> countAllCommentByBlogId(@PathVariable Long id) {
+        Long count = blogService.countComment(id);
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
 }
