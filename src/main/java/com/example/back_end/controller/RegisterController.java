@@ -5,16 +5,12 @@ import com.example.back_end.model.User;
 import com.example.back_end.service.IRoleService;
 import com.example.back_end.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.Random;
 
 @RestController
 @CrossOrigin("*")
@@ -28,19 +24,32 @@ public class RegisterController {
 
 	@PostMapping
 	public ResponseEntity<?> createUser(@RequestBody RegisterForm user) {
+		int leftLimit = 97; // letter 'a'
+		int rightLimit = 122; // letter 'z'
+		int targetStringLength = 10;
+		Random random = new Random();
+
+		String generatedString = random.ints(leftLimit, rightLimit + 1)
+			.limit(targetStringLength)
+			.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+			.toString();
 		if (user.getUsername().equals("") || user.getPass().equals("") || user.getRePass().equals("")) {
 			return new ResponseEntity<>("All fields can not be blank", HttpStatus.CONFLICT);
 		}
 		if (userService.findUserByUsername(user.getUsername()) == null &&
 			userService.findUserByEmail(user.getEmail()) == null) {
+			if (user.getPass().length() < 6 || user.getPass().length() > 8) {
+				return new ResponseEntity<>("Password must be 6 to 8 characters", HttpStatus.NOT_FOUND);
+			}
 			if (user.getPass().equals(user.getRePass())) {
 				User userCreate = new User();
+				userCreate.setName(generatedString);
 				userCreate.setUsername(user.getUsername());
 				userCreate.setPassword(user.getPass());
 				userCreate.setEmail(user.getEmail());
 				userCreate.setStatus(true);
 				userCreate.setRole(roleService.findById(1L).get());
-				userCreate.setAvatar("/images/avatar/default.jpg");
+				userCreate.setAvatar("images/blog/d5e500cc4db9a1b28372cd9d9166ea89.jpg");
 				userService.save(userCreate);
 				return new ResponseEntity<>(user, HttpStatus.CREATED);
 			} else {
