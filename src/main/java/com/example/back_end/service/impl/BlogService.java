@@ -40,6 +40,7 @@ public class BlogService implements IBlogService {
     public void deleteById(Long id) {
         Blog blog = findById(id).get();
         blog.setStatus(false);
+        blogRepository.save(blog);
     }
 
     @Override
@@ -82,5 +83,15 @@ public class BlogService implements IBlogService {
         Blog blog = findById(id).get();
         blog.setPrivacy(!blog.isPrivacy());
         blogRepository.save(blog);
+    }
+
+    @Override
+    public void resetLabelBlog(Long blogId) {
+        blogRepository.resetLabelBlog(blogId);
+    }
+
+    @Override
+    public Page<Blog> searchOnHomePage(String string, Pageable pageable) {
+        return blogRepository.searchOnHomePage(string,pageable);
     }
 }

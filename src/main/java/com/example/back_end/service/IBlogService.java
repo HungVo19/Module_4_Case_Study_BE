@@ -20,6 +20,8 @@ public interface IBlogService extends ICOREService<Blog, Long> {
     Page<Blog>findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(Pageable pageable);
     int setLabelBlog(Long labelId,Long blogId);
     void changePrivacy(Long id);
+    void resetLabelBlog(Long blogId);
+    Page<Blog> searchOnHomePage(String string, Pageable pageable);
 
 
 }

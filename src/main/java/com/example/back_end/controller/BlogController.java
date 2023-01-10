@@ -48,7 +48,7 @@ public class BlogController {
 
     @GetMapping("/users/{userId}/blogs")
     public ResponseEntity<Page<Blog>> findAllByUserIdAndStatusIsTrue(@PathVariable Long userId,
-                                                                     @PageableDefault(size = 2)
+
                                                                      Pageable pageable) {
         return new ResponseEntity<>(blogService.findAllByUserIdAndStatusIsTrue(userId, pageable), HttpStatus.OK);
     }
@@ -81,6 +81,12 @@ public class BlogController {
     @GetMapping("/labels/{labelId}/blogs")
     public ResponseEntity<Page<Blog>> findAllPublicBlogsByLabelId(@PathVariable Long labelId, @PageableDefault(size = 2) Pageable pageable) {
         Page<Blog> blogs = blogService.findBlogsByLabelId(labelId, Pageable.unpaged());
+        return new ResponseEntity<>(blogs, HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs/searchHomePage")
+    public ResponseEntity<Page<Blog>> searchOnHomePage(@RequestParam(value = "q") String q, Pageable pageable) {
+        Page<Blog> blogs = blogService.searchOnHomePage(q,pageable);
         return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
@@ -142,7 +148,7 @@ public class BlogController {
             }
             blog.setImage(displayLink + fileName);
         } else {
-            blog.setImage(displayLink + "default.jpg");
+            blog.setImage(blogUpdate.getImage());
         }
 
         blog.setId(blogUpdate.getId());
@@ -150,11 +156,27 @@ public class BlogController {
         blog.setCreatedDate(blogUpdate.getCreatedDate());
 
         if (blog.getDescription() == null) {
-            blog.setDescription(blog.getContent().substring(0, 50) + "...");
+            blog.setDescription(blog.getContent().substring(0, 100) + "...");
+        }
+
+        blog.setStatus(true);
+
+        blogService.resetLabelBlog(blog.getId());
+
+        Pattern pattern = Pattern.compile("#[a-z0-9_]+");
+        Matcher matcher = pattern.matcher(blog.getContent());
+        Set<String> labelName = new HashSet<>();
+        while (matcher.find()) {
+            labelName.add(matcher.group());
+        }
+
+        for (String s : labelName) {
+            Label label = new Label(s);
+            Long labelId = labelService.save(label).getId();
+            blogService.setLabelBlog(labelId, blog.getId());
         }
 
         return new ResponseEntity<>(blogService.save(blog), HttpStatus.OK);
-
     }
 
     @GetMapping("/blogs/search")
