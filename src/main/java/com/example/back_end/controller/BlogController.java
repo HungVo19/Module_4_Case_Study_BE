@@ -187,4 +187,10 @@ public class BlogController {
         Long count = blogService.countComment(id);
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
+
+    @GetMapping("/admin/search/blogs")
+    public ResponseEntity<Page<Blog>> searchBlog(@RequestParam(value = "q") String q, Pageable pageable) {
+        Page<Blog> pages = blogService.findAllByTitleContainsOrContentContaining("%" + q + "%", "%" + q + "%", pageable);
+        return new ResponseEntity<>(pages, HttpStatus.OK);
+    }
 }

@@ -81,6 +81,12 @@ public class BlogService implements IBlogService {
     public Long countComment(Long id) {
         return blogRepository.countAllCommentByBlogId(id);
     }
+
+    @Override
+    public Page<Blog> findAllByTitleContainsOrContentContaining(String s1, String s2, Pageable pageable) {
+        return blogRepository.findAllByTitleContainsOrContentContaining(s1, s2, pageable);
+    }
+
     @Override
     public Page<Blog> findBlogsByLabelId(Long labelId, Pageable pageable) {
         return blogRepository.findBlogsByLabelId(labelId,pageable);
