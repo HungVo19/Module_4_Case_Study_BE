@@ -1,6 +1,7 @@
 package com.example.back_end.controller;
 
 import com.example.back_end.model.Label;
+import com.example.back_end.service.impl.BlogService;
 import com.example.back_end.service.impl.LabelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,9 @@ public class LabelController {
     @Autowired
     private LabelService labelService;
 
+    @Autowired
+    private BlogService blogService;
+
     @GetMapping
     public ResponseEntity<Page<Label>> findAllLabel(Pageable pageable) {
         return new ResponseEntity<>(labelService.findAll(pageable), HttpStatus.OK);
@@ -27,6 +31,8 @@ public class LabelController {
     public ResponseEntity<Page<Label>> getAllLabels() {
         return new ResponseEntity<>(labelService.findAll(Pageable.unpaged()), HttpStatus.OK);
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Label> findOneLabel(@PathVariable Long id) {
@@ -64,4 +70,11 @@ public class LabelController {
         }
     }
 
+    @GetMapping("/blog/{blogId}")
+    public ResponseEntity<Page<Label>> findAllLabelByBlogId(Pageable pageable, @PathVariable Long blogId) {
+        if (blogService.findById(blogId).isPresent()) {
+            return new ResponseEntity<>(labelService.findAllLabelByBlogId(Pageable.unpaged(), blogId), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }

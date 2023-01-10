@@ -62,4 +62,25 @@ public class BlogService implements IBlogService {
         return blogRepository.findAllByTitleContainingOrTitleContaining(string1,string2,pageable);
     }
 
+    @Override
+    public Page<Blog> findBlogsByLabelId(Long labelId, Pageable pageable) {
+        return blogRepository.findBlogsByLabelId(labelId,pageable);
+    }
+
+    @Override
+    public Page<Blog> findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(Pageable pageable) {
+        return blogRepository.findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(pageable);
+    }
+
+    @Override
+    public int setLabelBlog(Long labelId, Long blogId) {
+        return blogRepository.setLabelBlog(labelId,blogId);
+    }
+
+    @Override
+    public void changePrivacy(Long id) {
+        Blog blog = findById(id).get();
+        blog.setPrivacy(!blog.isPrivacy());
+        blogRepository.save(blog);
+    }
 }
