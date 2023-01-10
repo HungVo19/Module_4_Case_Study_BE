@@ -71,4 +71,16 @@ public class BlogService implements IBlogService {
     public Page<Blog> findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(Pageable pageable) {
         return blogRepository.findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(pageable);
     }
+
+    @Override
+    public int setLabelBlog(Long labelId, Long blogId) {
+        return blogRepository.setLabelBlog(labelId,blogId);
+    }
+
+    @Override
+    public void changePrivacy(Long id) {
+        Blog blog = findById(id).get();
+        blog.setPrivacy(!blog.isPrivacy());
+        blogRepository.save(blog);
+    }
 }

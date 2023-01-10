@@ -4,12 +4,15 @@ import com.example.back_end.model.Blog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
+@Transactional
 public interface IBlogRepository extends JpaRepository<Blog,Long> {
     Page<Blog>findAllByUserIdAndStatusIsTrue(Long userId,Pageable pageable);
     Page<Blog>findAllByPrivacyIsTrueAndStatusIsTrueOrderByCreatedDateDesc(Pageable pageable);
@@ -21,5 +24,8 @@ public interface IBlogRepository extends JpaRepository<Blog,Long> {
             " on blog.id = label_blogs.blogs_id left join label on label_blogs.label_id = label.id " +
             "where label.id = ?1  order by blog.created_date desc")
     Page<Blog>findBlogsByLabelId(Long id, Pageable pageable);
+    @Modifying
+    @Query(nativeQuery = true, value = "INSERT INTO case_study_md_4.label_blogs (label_id, blogs_id) VALUES (?1,?2)")
+    int setLabelBlog(Long labelId,Long blogId);
 
 }

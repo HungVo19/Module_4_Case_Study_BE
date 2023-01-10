@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -28,7 +29,12 @@ public class LabelService implements ILabelService {
 
     @Override
     public Label save(Label label) {
-        return iLabelRepository.save(label);
+        Label labelExisted = findLabelsByName(label.getName());
+        if(Objects.isNull(labelExisted)) {
+            return iLabelRepository.save(label);
+        } else {
+            return labelExisted;
+        }
     }
 
     @Override
@@ -47,4 +53,8 @@ public class LabelService implements ILabelService {
         return iLabelRepository.findAllLabelByBlogId(id, pageable);
     }
 
+    @Override
+    public Label findLabelsByName(String name) {
+        return iLabelRepository.findLabelsByName(name);
+    }
 }

@@ -9,4 +9,7 @@ public interface ILabelService extends ICOREService<Label, Long> {
 
     Page<Label> findAllLabelByBlogId(Pageable pageable, Long id);
 
+    Label findLabelsByName(String name);
+
+
 }

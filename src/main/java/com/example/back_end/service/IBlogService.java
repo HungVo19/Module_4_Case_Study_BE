@@ -1,6 +1,7 @@
 package com.example.back_end.service;
 
 import com.example.back_end.model.Blog;
+import com.example.back_end.model.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,8 @@ public interface IBlogService extends ICOREService<Blog, Long> {
     Page<Blog>findBlogsByLabelId(Long labelId, Pageable pageable
     );
     Page<Blog>findAllByPrivacyIsTrueAndStatusIsTrueOrderByIdDesc(Pageable pageable);
-
+    int setLabelBlog(Long labelId,Long blogId);
+    void changePrivacy(Long id);
 
 
 }
