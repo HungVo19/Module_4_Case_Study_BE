@@ -28,7 +28,7 @@ public class RegisterController {
 
 	@PostMapping
 	public ResponseEntity<?> createUser(@RequestBody RegisterForm user) {
-		if (user.getUsername() == null || user.getPass() == null || user.getRePass() == null) {
+		if (user.getUsername().equals("") || user.getPass().equals("") || user.getRePass().equals("")) {
 			return new ResponseEntity<>("All fields can not be blank", HttpStatus.CONFLICT);
 		}
 		if (userService.findUserByUsername(user.getUsername()) == null &&
@@ -37,15 +37,19 @@ public class RegisterController {
 				User userCreate = new User();
 				userCreate.setUsername(user.getUsername());
 				userCreate.setPassword(user.getPass());
+				userCreate.setEmail(user.getEmail());
 				userCreate.setStatus(true);
 				userCreate.setRole(roleService.findById(1L).get());
+				userCreate.setAvatar("/images/avatar/default.jpg");
 				userService.save(userCreate);
 				return new ResponseEntity<>(user, HttpStatus.CREATED);
 			} else {
 				return new ResponseEntity<>("Wrong re-pass", HttpStatus.CONFLICT);
 			}
+		} else if (userService.findUserByUsername(user.getUsername()) != null){
+			return new ResponseEntity<>("Username is existed", HttpStatus.CONFLICT);
 		} else {
-			return new ResponseEntity<>("Username or password is existed", HttpStatus.CONFLICT);
+			return new ResponseEntity<>("Email is existed", HttpStatus.CONFLICT);
 		}
 	}
 }

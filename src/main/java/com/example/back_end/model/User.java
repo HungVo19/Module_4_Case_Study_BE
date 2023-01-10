@@ -1,6 +1,7 @@
 package com.example.back_end.model;
 
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import java.util.List;

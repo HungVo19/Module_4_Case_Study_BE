@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/admin")
@@ -39,10 +41,10 @@ public class AdminController {
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<Page<User>> searchUserByUsername(@RequestParam("q") String username, Pageable pageable) {
+	public ResponseEntity<?> searchUserByUsername(@RequestParam("q") String username, Pageable pageable) {
 		Page<User> users = userService.findUserByUsernameContaining(pageable, username);
 		if (users.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("User " + username.toUpperCase(Locale.ROOT) + " is not exist", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(users, HttpStatus.OK);
 
