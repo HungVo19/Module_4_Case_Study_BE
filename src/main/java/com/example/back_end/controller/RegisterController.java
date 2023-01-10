@@ -24,15 +24,7 @@ public class RegisterController {
 
 	@PostMapping
 	public ResponseEntity<?> createUser(@RequestBody RegisterForm user) {
-		int leftLimit = 97; // letter 'a'
-		int rightLimit = 122; // letter 'z'
-		int targetStringLength = 10;
-		Random random = new Random();
 
-		String generatedString = random.ints(leftLimit, rightLimit + 1)
-			.limit(targetStringLength)
-			.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-			.toString();
 		if (user.getUsername().equals("") || user.getPass().equals("") || user.getRePass().equals("")) {
 			return new ResponseEntity<>("All fields can not be blank", HttpStatus.CONFLICT);
 		}
@@ -43,7 +35,6 @@ public class RegisterController {
 			}
 			if (user.getPass().equals(user.getRePass())) {
 				User userCreate = new User();
-				userCreate.setName(generatedString);
 				userCreate.setUsername(user.getUsername());
 				userCreate.setPassword(user.getPass());
 				userCreate.setEmail(user.getEmail());
