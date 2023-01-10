@@ -16,15 +16,21 @@ public class LoginController {
 	private UserService userService;
 
 	@PostMapping
-	public ResponseEntity<User> login(@RequestBody LoginForm loginForm) {
+	public ResponseEntity<?> login(@RequestBody LoginForm loginForm) {
 		User usernameLogin = userService.findUserByUsername(loginForm.getLoginInput());
-		User emailLogin = userService.findUserByEmail(loginForm.getLoginInput());
-		if (usernameLogin != null && usernameLogin.getPassword().equals(loginForm.getPassword())) {
-			return new ResponseEntity<>(usernameLogin, HttpStatus.OK);
+		if (loginForm.getPassword().equals("") || loginForm.getLoginInput().equals("")) {
+			return new ResponseEntity<>("All fields can not be blank", HttpStatus.NOT_FOUND);
 		}
-		if (emailLogin != null && emailLogin.getPassword().equals(loginForm.getPassword())) {
-			return new ResponseEntity<>(emailLogin, HttpStatus.OK);
+		if (usernameLogin != null) {
+			if (!usernameLogin.isStatus()) {
+				return new ResponseEntity<>("Account blocked", HttpStatus.NOT_FOUND);
+			} else if (!usernameLogin.getPassword().equals(loginForm.getPassword())) {
+				return new ResponseEntity<>("Wrong password", HttpStatus.NOT_FOUND);
+			} else {
+				return new ResponseEntity<>(usernameLogin, HttpStatus.OK);
+			}
 		}
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Account not exist", HttpStatus.NOT_FOUND);
 	}
+
 }

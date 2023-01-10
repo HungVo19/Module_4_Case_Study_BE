@@ -1,12 +1,13 @@
 package com.example.back_end.service;
 
 import com.example.back_end.model.Blog;
+import com.example.back_end.model.Comment;
+import com.example.back_end.model.User;
 import com.example.back_end.model.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 
 public interface IBlogService extends ICOREService<Blog, Long> {
     Page<Blog> findAllByUserIdAndStatusIsTrue(Long userId, Pageable pageable);
@@ -24,4 +25,9 @@ public interface IBlogService extends ICOREService<Blog, Long> {
     Page<Blog> searchOnHomePage(String string, Pageable pageable);
 
 
+    ResponseEntity<Blog> setStatus(Long id);
+
+    Long countComment(Long id);
+
+    Page<Blog> findAllByTitleContainsOrContentContaining(String s1, String s2, Pageable pageable);
 }

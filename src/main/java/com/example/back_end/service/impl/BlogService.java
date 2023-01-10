@@ -64,6 +64,31 @@ public class BlogService implements IBlogService {
     }
 
     @Override
+    public ResponseEntity<Blog> setStatus(Long id) {
+        Optional<Blog> blog = blogRepository.findById(id);
+        if (!blog.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (blog.get().isStatus()) {
+            blog.get().setStatus(false);
+        } else {
+            blog.get().setStatus(true);
+        }
+        blogRepository.save(blog.get());
+        return new ResponseEntity<>(blog.get(), HttpStatus.OK);
+    }
+
+    @Override
+    public Long countComment(Long id) {
+        return blogRepository.countAllCommentByBlogId(id);
+    }
+
+    @Override
+    public Page<Blog> findAllByTitleContainsOrContentContaining(String s1, String s2, Pageable pageable) {
+        return blogRepository.findAllByTitleContainsOrContentContaining(s1, s2, pageable);
+    }
+
+    @Override
     public Page<Blog> findBlogsByLabelId(Long labelId, Pageable pageable) {
         return blogRepository.findBlogsByLabelId(labelId,pageable);
     }

@@ -3,6 +3,7 @@ package com.example.back_end.controller;
 import com.example.back_end.model.Blog;
 import com.example.back_end.model.Comment;
 import com.example.back_end.model.Label;
+import com.example.back_end.model.User;
 import com.example.back_end.service.IBlogService;
 import com.example.back_end.service.ICommentService;
 import com.example.back_end.service.ILabelService;
@@ -60,7 +61,8 @@ public class BlogController {
 
     @GetMapping("/blogs")
     public ResponseEntity<Page<Blog>> findAll(@PageableDefault(size = 2) Pageable pageable) {
-        return new ResponseEntity<>(blogService.findAll(Pageable.unpaged()), HttpStatus.OK);
+        Page<Blog> blogs = blogService.findAll(pageable);
+        return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
     @GetMapping("/blogs/public")
@@ -192,9 +194,25 @@ public class BlogController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/blogs/set/{id}")
+    public ResponseEntity<Blog> setStatus(@PathVariable Long id) {
+        return blogService.setStatus(id);
+    }
+
     @PutMapping("/blogs/{id}/privacy")
     public ResponseEntity<?> changePrivacy(@PathVariable Long id) {
         blogService.changePrivacy(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("blogs/count/{id}")
+    public ResponseEntity<Long> countAllCommentByBlogId(@PathVariable Long id) {
+        Long count = blogService.countComment(id);
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/search/blogs")
+    public ResponseEntity<Page<Blog>> searchBlog(@RequestParam(value = "q") String q, Pageable pageable) {
+        Page<Blog> pages = blogService.findAllByTitleContainsOrContentContaining("%" + q + "%", "%" + q + "%", pageable);
+        return new ResponseEntity<>(pages, HttpStatus.OK);
     }
 }

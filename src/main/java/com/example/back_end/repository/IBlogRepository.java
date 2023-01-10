@@ -1,16 +1,19 @@
 package com.example.back_end.repository;
 
 import com.example.back_end.model.Blog;
+import com.example.back_end.model.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -41,4 +44,8 @@ public interface IBlogRepository extends JpaRepository<Blog, Long> {
 
     @Query(value = "select b from Blog b where b.privacy = true and b.status = true and (b.title like %:searchText% or b.description like %:searchText% or b.content like %:searchText%)")
     Page<Blog> searchOnHomePage(@Param("searchText") String string, Pageable pageable);
+    @Query(value = "select count(c) from Comment c join Blog b on c.blog.id = b.id where c.blog.id = ?1")
+    Long countAllCommentByBlogId(Long id);
+
+    Page<Blog> findAllByTitleContainsOrContentContaining(String s1, String s2, Pageable pageable);
 }
