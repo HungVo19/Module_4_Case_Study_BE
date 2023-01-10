@@ -2,6 +2,7 @@ package com.example.back_end.controller;
 
 import com.example.back_end.model.Blog;
 import com.example.back_end.model.Comment;
+import com.example.back_end.model.Label;
 import com.example.back_end.model.User;
 import com.example.back_end.service.IBlogService;
 import com.example.back_end.service.ICommentService;
@@ -18,11 +19,17 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin("*")
@@ -31,6 +38,8 @@ import java.util.List;
 public class BlogController {
     @Autowired
     IBlogService blogService;
+    @Autowired
+    ILabelService labelService;
 
     @Value("${upload.path}")
     private String link;
@@ -42,7 +51,7 @@ public class BlogController {
     public ResponseEntity<Page<Blog>> findAllByUserIdAndStatusIsTrue(@PathVariable Long userId,
                                                                      @PageableDefault(size = 2)
                                                                      Pageable pageable) {
-        return new ResponseEntity<>(blogService.findAllByUserIdAndStatusIsTrue(userId, Pageable.unpaged()), HttpStatus.OK);
+        return new ResponseEntity<>(blogService.findAllByUserIdAndStatusIsTrue(userId, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/blogs/{blogId}")
@@ -72,12 +81,13 @@ public class BlogController {
     }
 
     @GetMapping("/labels/{labelId}/blogs")
-    public ResponseEntity<Page<Blog>> findAllPublicBlogsByLabelId(@PathVariable Long labelId,@PageableDefault(size = 2) Pageable pageable) {
+    public ResponseEntity<Page<Blog>> findAllPublicBlogsByLabelId(@PathVariable Long labelId, @PageableDefault(size = 2) Pageable pageable) {
         Page<Blog> blogs = blogService.findBlogsByLabelId(labelId, Pageable.unpaged());
         return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
     @PostMapping("/blogs")
+    @Transactional
     public ResponseEntity<Blog> create(@RequestPart(value = "file", required = false)
                                        MultipartFile file,
                                        @RequestPart("blog") Blog blog) {
@@ -101,8 +111,23 @@ public class BlogController {
 
         blog.setStatus(true);
 
+        Blog latestBlog = blogService.save(blog);
+        Long blogId = latestBlog.getId();
 
-        return new ResponseEntity<>(blogService.save(blog), HttpStatus.CREATED);
+        Pattern pattern = Pattern.compile("#[a-z0-9_]+");
+        Matcher matcher = pattern.matcher(latestBlog.getContent());
+        Set<String> labelName = new HashSet<>();
+        while (matcher.find()) {
+            labelName.add(matcher.group());
+        }
+
+        for (String s : labelName) {
+            Label label = new Label(s);
+            Long labelId = labelService.save(label).getId();
+            blogService.setLabelBlog(labelId, blogId);
+        }
+
+        return new ResponseEntity<>(latestBlog, HttpStatus.CREATED);
     }
 
     @PutMapping("/blogs/{id}")
@@ -141,17 +166,22 @@ public class BlogController {
         return new ResponseEntity<>(pages, HttpStatus.OK);
     }
 
-//    @DeleteMapping("/blogs/{id}")
-//    public ResponseEntity<?> deleteById(@PathVariable Long id) {
-//        blogService.deleteById(id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @DeleteMapping("/blogs/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        blogService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-    @PostMapping("/blogs/{id}")
+    @PostMapping("/blogs/set/{id}")
     public ResponseEntity<Blog> setStatus(@PathVariable Long id) {
         return blogService.setStatus(id);
     }
 
+    @PutMapping("/blogs/{id}/privacy")
+    public ResponseEntity<?> changePrivacy(@PathVariable Long id) {
+        blogService.changePrivacy(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @GetMapping("blogs/count/{id}")
     public ResponseEntity<Long> countAllCommentByBlogId(@PathVariable Long id) {
         Long count = blogService.countComment(id);
