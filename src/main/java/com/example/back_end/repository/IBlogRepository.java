@@ -42,7 +42,7 @@ public interface IBlogRepository extends JpaRepository<Blog, Long> {
     @Query(nativeQuery = true, value = "DELETE FROM case_study_md_4.label_blogs WHERE label_blogs.blogs_id = ?1")
     void resetLabelBlog(Long blogId);
 
-    @Query(value = "select b from Blog b where b.privacy = true and b.status = true and (b.title like %:searchText% or b.description like %:searchText%)")
+    @Query(value = "select b from Blog b where b.privacy = true and b.status = true and (b.title like :searchText or b.description like :searchText)")
     Page<Blog> searchOnHomePage(@Param("searchText") String string, Pageable pageable);
     @Query(value = "select count(c) from Comment c join Blog b on c.blog.id = b.id where c.blog.id = ?1")
     Long countAllCommentByBlogId(Long id);

@@ -23,13 +23,8 @@ public interface IBlogService extends ICOREService<Blog, Long> {
     void changePrivacy(Long id);
     void resetLabelBlog(Long blogId);
     Page<Blog> searchOnHomePage(String string, Pageable pageable);
-
-
     ResponseEntity<Blog> setStatus(Long id);
-
     Long countComment(Long id);
-
-    Page<Blog> findAllByTitleContainsOrContentContaining(String s1, String s2, Pageable pageable);
     Page<Blog> findAllByUserIdAndStatusIsTrueOrderByIdDesc(Long userId, Pageable pageable);
     Page<Blog>findAllByTitleContainingOrDescriptionContainingAndUserId(String title, String description, Long user_id, Pageable pageable);
 

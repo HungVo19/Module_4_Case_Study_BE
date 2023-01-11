@@ -125,4 +125,5 @@ public class BlogService implements IBlogService {
     public Page<Blog> findAllByTitleContainingOrDescriptionContainingAndUserId(String title, String description, Long user_id, Pageable pageable) {
         return blogRepository.findAllByTitleContainingOrDescriptionContainingAndUserId(title,description,user_id,pageable);
     }
+
 }
