@@ -30,4 +30,8 @@ public interface IBlogService extends ICOREService<Blog, Long> {
     Long countComment(Long id);
 
     Page<Blog> findAllByTitleContainsOrContentContaining(String s1, String s2, Pageable pageable);
+    Page<Blog> findAllByUserIdAndStatusIsTrueOrderByIdDesc(Long userId, Pageable pageable);
+    Page<Blog>findAllByTitleContainingOrDescriptionContainingAndUserId(String title, String description, Long user_id, Pageable pageable);
+
+
 }

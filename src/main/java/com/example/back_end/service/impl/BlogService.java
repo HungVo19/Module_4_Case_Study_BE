@@ -119,4 +119,14 @@ public class BlogService implements IBlogService {
     public Page<Blog> searchOnHomePage(String string, Pageable pageable) {
         return blogRepository.searchOnHomePage(string,pageable);
     }
+
+    @Override
+    public Page<Blog> findAllByUserIdAndStatusIsTrueOrderByIdDesc(Long userId, Pageable pageable) {
+        return blogRepository.findAllByUserIdAndStatusIsTrueOrderByIdDesc(userId,pageable);
+    }
+
+    @Override
+    public Page<Blog> findAllByTitleContainingOrDescriptionContainingAndUserId(String title, String description, Long user_id, Pageable pageable) {
+        return blogRepository.findAllByTitleContainingOrDescriptionContainingAndUserId(title,description,user_id,pageable);
+    }
 }

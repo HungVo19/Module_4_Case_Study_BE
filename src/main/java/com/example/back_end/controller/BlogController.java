@@ -51,7 +51,7 @@ public class BlogController {
     public ResponseEntity<Page<Blog>> findAllByUserIdAndStatusIsTrue(@PathVariable Long userId,
 
                                                                      Pageable pageable) {
-        return new ResponseEntity<>(blogService.findAllByUserIdAndStatusIsTrue(userId, pageable), HttpStatus.OK);
+        return new ResponseEntity<>(blogService.findAllByUserIdAndStatusIsTrueOrderByIdDesc(userId, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/blogs/{blogId}")
@@ -89,6 +89,19 @@ public class BlogController {
     @GetMapping("/blogs/searchHomePage")
     public ResponseEntity<Page<Blog>> searchOnHomePage(@RequestParam(value = "q") String q, Pageable pageable) {
         Page<Blog> blogs = blogService.searchOnHomePage(q,pageable);
+        return new ResponseEntity<>(blogs, HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs/search")
+    public ResponseEntity<Page<Blog>> search(@RequestParam(value = "q") String q, Pageable pageable) {
+        Page<Blog> pages = blogService.findAllByTitleContainingOrTitleContaining("%" + q + "%", "%" + q + "%", Pageable.unpaged());
+        System.out.println("test");
+        return new ResponseEntity<>(pages, HttpStatus.OK);
+    }
+
+    @GetMapping("blogs/search/user")
+    public ResponseEntity<Page<Blog>> searchOnUserPage(@RequestParam(value = "q") String q,@RequestParam(value = "id") Long id,@PageableDefault(size = 2) Pageable pageable) {
+        Page<Blog> blogs = blogService.findAllByTitleContainingOrDescriptionContainingAndUserId(q,q,id,pageable);
         return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
@@ -158,7 +171,7 @@ public class BlogController {
         blog.setCreatedDate(blogUpdate.getCreatedDate());
 
         if (blog.getDescription() == null) {
-            blog.setDescription(blog.getContent().substring(0, 100) + "...");
+            blog.setDescription(blog.getContent().substring(0, 300) + "...");
         }
 
         blog.setStatus(true);
@@ -181,12 +194,7 @@ public class BlogController {
         return new ResponseEntity<>(blogService.save(blog), HttpStatus.OK);
     }
 
-    @GetMapping("/blogs/search")
-    public ResponseEntity<Page<Blog>> search(@RequestParam(value = "q") String q, Pageable pageable) {
-        Page<Blog> pages = blogService.findAllByTitleContainingOrTitleContaining("%" + q + "%", "%" + q + "%", Pageable.unpaged());
-        System.out.println("test");
-        return new ResponseEntity<>(pages, HttpStatus.OK);
-    }
+
 
     @DeleteMapping("/blogs/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
@@ -212,7 +220,7 @@ public class BlogController {
 
     @GetMapping("/admin/search/blogs")
     public ResponseEntity<Page<Blog>> searchBlog(@RequestParam(value = "q") String q, Pageable pageable) {
-        Page<Blog> pages = blogService.findAllByTitleContainsOrContentContaining("%" + q + "%", "%" + q + "%", pageable);
-        return new ResponseEntity<>(pages, HttpStatus.OK);
+        Page<Blog> blogs = blogService.findAllByTitleContainsOrContentContaining("%" + q + "%", "%" + q + "%", Pageable.unpaged());
+        return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 }
