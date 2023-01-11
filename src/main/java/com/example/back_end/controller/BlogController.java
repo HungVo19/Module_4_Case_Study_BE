@@ -183,7 +183,7 @@ public class BlogController {
 
     @GetMapping("/blogs/search")
     public ResponseEntity<Page<Blog>> search(@RequestParam(value = "q") String q, Pageable pageable) {
-        Page<Blog> pages = blogService.findAllByTitleContainingOrTitleContaining("%" + q + "%", "%" + q + "%", Pageable.unpaged());
+        Page<Blog> pages = blogService.findAllByTitleContainingOrTitleContaining("%" + q + "%", "%" + q + "%", pageable);
         System.out.println("test");
         return new ResponseEntity<>(pages, HttpStatus.OK);
     }
