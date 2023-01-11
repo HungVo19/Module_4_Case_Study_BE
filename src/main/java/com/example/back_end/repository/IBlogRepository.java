@@ -47,9 +47,10 @@ public interface IBlogRepository extends JpaRepository<Blog, Long> {
     @Query(value = "select count(c) from Comment c join Blog b on c.blog.id = b.id where c.blog.id = ?1")
     Long countAllCommentByBlogId(Long id);
 
-    Page<Blog> findAllByTitleContainsOrContentContaining(String s1, String s2, Pageable pageable);
+//    Page<Blog> findAllByTitleContainsOrContentContaining(String s1, String s2, Pageable pageable);
 
     Page<Blog> findAllByUserIdAndStatusIsTrueOrderByIdDesc(Long userId, Pageable pageable);
     Page<Blog>findAllByTitleContainingOrDescriptionContainingAndUserId(String title, String description, Long user_id, Pageable pageable);
+
 
 }
