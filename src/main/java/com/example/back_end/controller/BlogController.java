@@ -1,11 +1,8 @@
 package com.example.back_end.controller;
 
 import com.example.back_end.model.Blog;
-import com.example.back_end.model.Comment;
 import com.example.back_end.model.Label;
-import com.example.back_end.model.User;
 import com.example.back_end.service.IBlogService;
-import com.example.back_end.service.ICommentService;
 import com.example.back_end.service.ILabelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,10 +20,7 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,7 +70,7 @@ public class BlogController {
     }
 
     @GetMapping("/users/{id}/blogs/public")
-    public ResponseEntity<Page<Blog>> findAllPublicBlogsByUserId(@PathVariable Long id, Pageable pageable) {
+    public ResponseEntity<Page<Blog>> findAllPublicBlogsByUserId(@PathVariable Long id) {
         return new ResponseEntity<>(blogService.findAllPublicBlogsByUserId(id, Pageable.unpaged()), HttpStatus.OK);
     }
 

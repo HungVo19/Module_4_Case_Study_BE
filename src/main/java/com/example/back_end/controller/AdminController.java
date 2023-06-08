@@ -2,7 +2,7 @@ package com.example.back_end.controller;
 
 import com.example.back_end.model.User;
 import com.example.back_end.service.impl.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,9 +14,9 @@ import java.util.Locale;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 
 	@GetMapping
 	public ResponseEntity<Page<User>> listNormalUsers(Pageable pageable) {

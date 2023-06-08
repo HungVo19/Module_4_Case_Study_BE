@@ -42,7 +42,7 @@ public class UserController {
 
 	@PutMapping("/{id}")
 	@Transactional
-	public ResponseEntity<User> updateUser(@RequestPart(value = "file", required = false)MultipartFile file,
+	public ResponseEntity<User> updateUser(@RequestPart(value = "file", required = false) MultipartFile file,
 										   @RequestPart("user") User user,
 										   @PathVariable Long id) {
 		Optional<User> userUpdate = userService.findById(id);
@@ -66,7 +66,7 @@ public class UserController {
 
 	@PutMapping("/change-password/{id}")
 	public ResponseEntity<?> changePassword(@PathVariable Long id,
-											   @RequestBody ChangePassword changePassword) {
+											@RequestBody ChangePassword changePassword) {
 		User user = userService.findById(id).get();
 
 		if (changePassword.getNewPass().equals("") || changePassword.getConfirmPass().equals("")) {
@@ -75,11 +75,11 @@ public class UserController {
 
 		if (changePassword.getNewPass().equals(user.getPassword())) {
 
-			return new ResponseEntity<>("New password can not same current password",HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("New password can not same current password", HttpStatus.NOT_FOUND);
 
 		} else if (!changePassword.getConfirmPass().equals(changePassword.getNewPass())) {
 
-			return new ResponseEntity<>("Wrong re-password",HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Wrong re-password", HttpStatus.NOT_FOUND);
 
 		}
 		user.setPassword(changePassword.getNewPass());
@@ -100,19 +100,19 @@ public class UserController {
 		if (confirmUsername.equals(confirmEmail)) {
 			return new ResponseEntity<>(confirmEmail, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>("Wrong email",HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Wrong email", HttpStatus.NOT_FOUND);
 		}
 	}
 
 	@PostMapping("/change-password/{id}")
 	public ResponseEntity<?> changePassAfterForgot(@PathVariable Long id,
-													  @RequestBody ChangePassword changePassword) {
+												   @RequestBody ChangePassword changePassword) {
 		Optional<User> user = userService.findById(id);
 		if (changePassword.getNewPass().equals("") || changePassword.getConfirmPass().equals("")) {
 			return new ResponseEntity<>("All fields can not be blank", HttpStatus.NOT_FOUND);
 		}
 		if (!user.isPresent()) {
-			return new ResponseEntity<>("Username not exist",HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Username not exist", HttpStatus.NOT_FOUND);
 		}
 		if (changePassword.getNewPass().equals(changePassword.getConfirmPass())) {
 			user.get().setPassword(changePassword.getNewPass());
